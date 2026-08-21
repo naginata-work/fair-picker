@@ -93,7 +93,17 @@
     <button class="ghost-btn" id="copyBtn"></button>
   </div>
 
+  <div class="card" style="font-size:13px; line-height:1.9; color:var(--sub);">
+    <h2 id="aboutTitle" style="font-size:15px; color:var(--text); margin:0 0 8px;"></h2>
+    <p id="aboutBody1" style="margin:0 0 10px;"></p>
+    <p id="aboutBody2" style="margin:0;"></p>
+  </div>
+
   <p class="footer-links" id="footerLinks"></p>
+  <p style="text-align:center; font-size:11px; color:var(--sub); margin-top:4px;">
+    <a href="https://naginata-work.github.io/" style="color:var(--sub);" id="allToolsLink"></a> ・
+    <a href="https://naginata-work.github.io/privacy.html" style="color:var(--sub);" id="privacyLink"></a>
+  </p>
 </div>
 
 <script>
@@ -114,7 +124,12 @@
       copyBtn: '結果をコピー',
       copied: 'コピーしました!',
       shareText: (name, task) => task ? `くじ引き結果: 「${task}」は${name}さんに決定!` : `くじ引き結果: ${name}さんが当たりました!`,
-      footerLinks: '他のツールも作っています → <a href="https://naginata-work.github.io/warikan-tool/" target="_blank" rel="noopener">割り勘計算機</a> / <a href="https://naginata-work.github.io/reaction-speed-tool/" target="_blank" rel="noopener">反応速度テスト</a>'
+      footerLinks: '他のツールも作っています → <a href="https://naginata-work.github.io/warikan-tool/" target="_blank" rel="noopener">割り勘計算機</a> / <a href="https://naginata-work.github.io/reaction-speed-tool/" target="_blank" rel="noopener">反応速度テスト</a>',
+      aboutTitle: '使い方について',
+      aboutBody1: '「今日は誰が奢るか」「どっちが先に発表するか」など、複数人の中から1人(またはグループ)を公平に選びたい場面は日常によくあります。話し合いで決めようとすると、遠慮や忖度が入って揉めることもありますが、ランダムな抽選であれば全員が納得しやすくなります。',
+      aboutBody2: '参加者の名前を入力して「ランダムに決める」を押すだけで、公平な確率で1人が選ばれます。「何を決めるか」の欄に「支払い係」「発表順」などを入れておくと、結果をそのままコピーしてグループチャットに共有できます。飲み会・部活動・オンライン会議など、様々な場面でご利用いただけます。',
+      allToolsLink: '他のツール一覧',
+      privacyLink: 'プライバシーポリシー'
     },
     en: {
       title: '🎯 Fair Picker',
@@ -132,7 +147,12 @@
       copyBtn: 'Copy result',
       copied: 'Copied!',
       shareText: (name, task) => task ? `Fair Picker result: "${task}" goes to ${name}!` : `Fair Picker result: ${name} was picked!`,
-      footerLinks: 'Also made these → <a href="https://naginata-work.github.io/warikan-tool/" target="_blank" rel="noopener">Bill Splitter</a> / <a href="https://naginata-work.github.io/reaction-speed-tool/" target="_blank" rel="noopener">Reaction Speed Test</a>'
+      footerLinks: 'Also made these → <a href="https://naginata-work.github.io/warikan-tool/" target="_blank" rel="noopener">Bill Splitter</a> / <a href="https://naginata-work.github.io/reaction-speed-tool/" target="_blank" rel="noopener">Reaction Speed Test</a>',
+      aboutTitle: 'How to use it',
+      aboutBody1: 'Deciding who buys the next round, who presents first, or who gets picked from a group comes up constantly in everyday life. Trying to settle it by discussion often leads to awkwardness or arguments, while a random draw feels fair to everyone involved.',
+      aboutBody2: 'Just type in everyone\'s name and hit "Pick randomly" — one person is chosen with equal probability. Fill in the optional "what are we deciding" field (e.g. "who pays", "presentation order") and the copied result will include it, ready to paste into a group chat. Useful for parties, teams, classrooms, and online meetings alike.',
+      allToolsLink: 'All tools',
+      privacyLink: 'Privacy policy'
     }
   };
 
@@ -236,6 +256,13 @@
     document.getElementById('pickBtn').textContent = lastWinner ? t().pickBtnAgain : t().pickBtn;
     document.getElementById('copyBtn').textContent = t().copied === stageSub.textContent ? t().copied : t().copyBtn;
     document.getElementById('footerLinks').innerHTML = t().footerLinks;
+    document.getElementById('aboutTitle').textContent = t().aboutTitle;
+    document.getElementById('aboutBody1').textContent = t().aboutBody1;
+    document.getElementById('aboutBody2').textContent = t().aboutBody2;
+    document.getElementById('allToolsLink').textContent = t().allToolsLink;
+    document.getElementById('allToolsLink').href = 'https://naginata-work.github.io/';
+    document.getElementById('privacyLink').textContent = t().privacyLink;
+    document.getElementById('privacyLink').href = 'https://naginata-work.github.io/privacy.html';
     [...peopleEl.querySelectorAll('input[type="text"]')].forEach(el => { el.placeholder = t().namePlaceholder; });
     if (!lastWinner) {
       stageText.textContent = '';
