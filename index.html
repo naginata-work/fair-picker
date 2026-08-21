@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fair Picker / 公平くじ引きツール</title>
+<meta name="description" content="誰が奢るか、どっちが先か。名前を入れるだけで公平にランダム決定。">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4214020669195548"
+     crossorigin="anonymous"></script>
+<style>
+  :root {
+    --bg: #12122a;
+    --card: #1c1c3d;
+    --text: #f2f2fa;
+    --sub: #9d9dc4;
+    --accent: #ff6ec7;
+    --accent2: #7c5cff;
+    --border: #2e2e57;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Hiragino Kaku Gothic ProN", "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 16px;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; }
+  .top-row { display: flex; justify-content: flex-end; margin-bottom: 4px; }
+  .lang-btn {
+    background: none; border: 1px solid var(--border); color: var(--sub);
+    border-radius: 6px; padding: 4px 10px; font-size: 12px; cursor: pointer;
+  }
+  h1 { font-size: 22px; text-align: center; margin: 4px 0 4px; }
+  .lead { text-align: center; color: var(--sub); font-size: 13px; margin-bottom: 18px; line-height: 1.6; }
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px; margin-bottom: 14px;
+  }
+  label { display: block; font-size: 13px; color: var(--sub); margin-bottom: 4px; }
+  input[type="text"] {
+    width: 100%; padding: 10px; font-size: 15px; border: 1px solid var(--border);
+    border-radius: 8px; background: #14142e; color: var(--text);
+  }
+  .field { margin-bottom: 12px; }
+  .person-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+  .person-row input { flex: 1; }
+  .remove { background: none; border: none; color: #77779c; font-size: 18px; cursor: pointer; padding: 0 4px; }
+  .add-btn, .pick-btn, .ghost-btn {
+    width: 100%; padding: 12px; border: none; border-radius: 10px;
+    font-size: 15px; font-weight: bold; cursor: pointer;
+  }
+  .add-btn { background: none; border: 1px dashed var(--accent2); color: var(--accent2); margin-top: 6px; }
+  .pick-btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; margin-top: 4px; }
+  .ghost-btn { background: none; border: 1px solid var(--border); color: var(--text); margin-top: 8px; font-weight: normal; font-size: 13.5px; }
+  .stage {
+    min-height: 140px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; text-align: center; padding: 20px;
+  }
+  .stage .winner-name { font-size: 30px; font-weight: bold; color: var(--accent); }
+  .stage .winner-name.spinning { color: var(--sub); font-size: 22px; }
+  .stage .task-label { font-size: 13px; color: var(--sub); margin-top: 6px; }
+  #resultCard { display: none; text-align: center; }
+  .footer-links { text-align: center; font-size: 12px; color: var(--sub); margin-top: 4px; line-height: 1.8; }
+  .footer-links a { color: var(--accent2); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-row"><button class="lang-btn" id="langBtn">EN</button></div>
+  <h1 id="title">🎯 公平くじ引きツール</h1>
+  <p class="lead" id="lead">名前を入れて回すだけ。「誰が奢るか」「どっちが先か」を揉めずに決められます。</p>
+
+  <div class="card">
+    <div class="field">
+      <label id="taskLabelLabel">何を決める?(任意)</label>
+      <input type="text" id="taskLabel" placeholder="例: 次のラウンドの奢り係">
+    </div>
+    <label id="peopleLabel">参加者</label>
+    <div id="people"></div>
+    <button class="add-btn" id="addPerson"></button>
+  </div>
+
+  <div class="card">
+    <div class="stage" id="stage">
+      <div class="winner-name" id="stageText"></div>
+      <div class="task-label" id="stageSub"></div>
+    </div>
+    <button class="pick-btn" id="pickBtn"></button>
+  </div>
+
+  <div class="card" id="resultCard">
+    <button class="ghost-btn" id="copyBtn"></button>
+  </div>
+
+  <p class="footer-links" id="footerLinks"></p>
+</div>
+
+<script>
+  const I18N = {
+    ja: {
+      title: '🎯 公平くじ引きツール',
+      lead: '名前を入れて回すだけ。「誰が奢るか」「どっちが先か」を揉めずに決められます。',
+      taskLabelLabel: '何を決める?(任意)',
+      taskPlaceholder: '例: 次のラウンドの奢り係',
+      peopleLabel: '参加者',
+      addPerson: '+ 参加者を追加',
+      pickBtn: 'ランダムに決める',
+      pickBtnAgain: 'もう一度回す',
+      namePlaceholder: '名前',
+      spinningText: '選んでいます...',
+      needTwo: '参加者を2人以上入力してください',
+      winnerSub: task => task ? `${task} に決定!` : '当たり!',
+      copyBtn: '結果をコピー',
+      copied: 'コピーしました!',
+      shareText: (name, task) => task ? `くじ引き結果: 「${task}」は${name}さんに決定!` : `くじ引き結果: ${name}さんが当たりました!`,
+      footerLinks: '他のツールも作っています → <a href="https://naginata-work.github.io/warikan-tool/" target="_blank" rel="noopener">割り勘計算機</a> / <a href="https://naginata-work.github.io/reaction-speed-tool/" target="_blank" rel="noopener">反応速度テスト</a>'
+    },
+    en: {
+      title: '🎯 Fair Picker',
+      lead: 'Type names, spin, done. Settle "who pays" or "who goes first" without an argument.',
+      taskLabelLabel: 'What are we deciding? (optional)',
+      taskPlaceholder: 'e.g. Who buys the next round',
+      peopleLabel: 'Participants',
+      addPerson: '+ Add participant',
+      pickBtn: 'Pick randomly',
+      pickBtnAgain: 'Spin again',
+      namePlaceholder: 'Name',
+      spinningText: 'Picking...',
+      needTwo: 'Add at least 2 participants',
+      winnerSub: task => task ? `Decided: ${task}` : 'Winner!',
+      copyBtn: 'Copy result',
+      copied: 'Copied!',
+      shareText: (name, task) => task ? `Fair Picker result: "${task}" goes to ${name}!` : `Fair Picker result: ${name} was picked!`,
+      footerLinks: 'Also made these → <a href="https://naginata-work.github.io/warikan-tool/" target="_blank" rel="noopener">Bill Splitter</a> / <a href="https://naginata-work.github.io/reaction-speed-tool/" target="_blank" rel="noopener">Reaction Speed Test</a>'
+    }
+  };
+
+  function loadLang() { try { return localStorage.getItem('fairPickerLang'); } catch (e) { return null; } }
+  function saveLang(l) { try { localStorage.setItem('fairPickerLang', l); } catch (e) {} }
+  let lang = loadLang() === 'en' ? 'en' : 'ja';
+  function t() { return I18N[lang]; }
+
+  const peopleEl = document.getElementById('people');
+  let personCount = 0;
+
+  function addPerson(name = '') {
+    personCount++;
+    const div = document.createElement('div');
+    div.className = 'person-row';
+    div.innerHTML = `<input type="text" placeholder="${t().namePlaceholder}" value="${name}">
+      <button class="remove" title="x">×</button>`;
+    div.querySelector('.remove').addEventListener('click', () => {
+      div.remove();
+    });
+    peopleEl.appendChild(div);
+  }
+
+  function initPeople() {
+    peopleEl.innerHTML = '';
+    addPerson();
+    addPerson();
+    addPerson();
+  }
+  initPeople();
+
+  document.getElementById('addPerson').addEventListener('click', () => addPerson());
+
+  let spinTimer = null;
+  const stage = document.getElementById('stage');
+  const stageText = document.getElementById('stageText');
+  const stageSub = document.getElementById('stageSub');
+  const resultCard = document.getElementById('resultCard');
+  let lastWinner = null;
+  let lastTask = '';
+
+  function currentNames() {
+    return [...peopleEl.querySelectorAll('input[type="text"]')]
+      .map(el => el.value.trim())
+      .filter(v => v.length > 0);
+  }
+
+  function pick() {
+    const names = currentNames();
+    const task = document.getElementById('taskLabel').value.trim();
+    if (names.length < 2) {
+      alert(t().needTwo);
+      return;
+    }
+    clearInterval(spinTimer);
+    stageText.className = 'winner-name spinning';
+    stageSub.textContent = t().spinningText;
+    resultCard.style.display = 'none';
+    let ticks = 0;
+    const totalTicks = 18 + Math.floor(Math.random() * 6);
+    spinTimer = setInterval(() => {
+      stageText.textContent = names[Math.floor(Math.random() * names.length)];
+      ticks++;
+      if (ticks >= totalTicks) {
+        clearInterval(spinTimer);
+        const winner = names[Math.floor(Math.random() * names.length)];
+        lastWinner = winner;
+        lastTask = task;
+        stageText.className = 'winner-name';
+        stageText.textContent = winner;
+        stageSub.textContent = t().winnerSub(task);
+        document.getElementById('pickBtn').textContent = t().pickBtnAgain;
+        resultCard.style.display = 'block';
+      }
+    }, 70);
+  }
+
+  document.getElementById('pickBtn').addEventListener('click', pick);
+
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    if (!lastWinner) return;
+    const text = t().shareText(lastWinner, lastTask) + ' ' + location.href;
+    try {
+      await navigator.clipboard.writeText(text);
+      const btn = document.getElementById('copyBtn');
+      const original = btn.textContent;
+      btn.textContent = t().copied;
+      setTimeout(() => { btn.textContent = original; }, 1500);
+    } catch {
+      alert(text);
+    }
+  });
+
+  function renderStaticText() {
+    document.getElementById('title').textContent = t().title;
+    document.getElementById('lead').textContent = t().lead;
+    document.getElementById('taskLabelLabel').textContent = t().taskLabelLabel;
+    document.getElementById('taskLabel').placeholder = t().taskPlaceholder;
+    document.getElementById('peopleLabel').textContent = t().peopleLabel;
+    document.getElementById('addPerson').textContent = t().addPerson;
+    document.getElementById('pickBtn').textContent = lastWinner ? t().pickBtnAgain : t().pickBtn;
+    document.getElementById('copyBtn').textContent = t().copied === stageSub.textContent ? t().copied : t().copyBtn;
+    document.getElementById('footerLinks').innerHTML = t().footerLinks;
+    [...peopleEl.querySelectorAll('input[type="text"]')].forEach(el => { el.placeholder = t().namePlaceholder; });
+    if (!lastWinner) {
+      stageText.textContent = '';
+      stageSub.textContent = '';
+    } else {
+      stageSub.textContent = t().winnerSub(lastTask);
+    }
+  }
+
+  document.getElementById('langBtn').addEventListener('click', () => {
+    lang = lang === 'ja' ? 'en' : 'ja';
+    saveLang(lang);
+    document.getElementById('langBtn').textContent = lang === 'ja' ? 'EN' : 'JA';
+    renderStaticText();
+  });
+
+  document.getElementById('langBtn').textContent = lang === 'ja' ? 'EN' : 'JA';
+  renderStaticText();
+</script>
+</body>
+</html>
