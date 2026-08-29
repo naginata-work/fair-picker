@@ -100,6 +100,14 @@
     <p id="aboutBody2" style="margin:0;"></p>
   </div>
 
+  <div class="card" style="font-size:13px; line-height:1.9; color:var(--sub);">
+    <h2 id="faqTitle" style="font-size:15px; color:var(--text); margin:0 0 10px;"></h2>
+    <p id="faq1Q" style="margin:0 0 4px; color:var(--text); font-weight:bold;"></p>
+    <p id="faq1A" style="margin:0 0 12px;"></p>
+    <p id="faq2Q" style="margin:0 0 4px; color:var(--text); font-weight:bold;"></p>
+    <p id="faq2A" style="margin:0;"></p>
+  </div>
+
   <p class="footer-links" id="footerLinks"></p>
   <p style="text-align:center; font-size:11px; color:var(--sub); margin-top:4px;">
     <a href="https://naginata-work.github.io/" style="color:var(--sub);" id="allToolsLink"></a> ・
@@ -129,6 +137,11 @@
       aboutTitle: '使い方について',
       aboutBody1: '「今日は誰が奢るか」「どっちが先に発表するか」など、複数人の中から1人(またはグループ)を公平に選びたい場面は日常によくあります。話し合いで決めようとすると、遠慮や忖度が入って揉めることもありますが、ランダムな抽選であれば全員が納得しやすくなります。',
       aboutBody2: '参加者の名前を入力して「ランダムに決める」を押すだけで、公平な確率で1人が選ばれます。「何を決めるか」の欄に「支払い係」「発表順」などを入れておくと、結果をそのままコピーしてグループチャットに共有できます。飲み会・部活動・オンライン会議など、様々な場面でご利用いただけます。',
+      faqTitle: 'よくある質問',
+      faq1Q: '本当に公平にランダムなの?',
+      faq1A: 'はい。ブラウザ標準の乱数機能を使って、参加者全員が同じ確率で選ばれるように実装しています。特定の名前が選ばれやすくなるような偏りはありません。',
+      faq2Q: '3人以上いても使える?人数の上限は?',
+      faq2A: '参加者は「+参加者を追加」ボタンで何人でも追加でき、2人からご利用いただけます。大人数の飲み会や部活のグループでも問題なく使えます。',
       allToolsLink: '他のツール一覧',
       privacyLink: 'プライバシーポリシー'
     },
@@ -152,6 +165,11 @@
       aboutTitle: 'How to use it',
       aboutBody1: 'Deciding who buys the next round, who presents first, or who gets picked from a group comes up constantly in everyday life. Trying to settle it by discussion often leads to awkwardness or arguments, while a random draw feels fair to everyone involved.',
       aboutBody2: 'Just type in everyone\'s name and hit "Pick randomly" — one person is chosen with equal probability. Fill in the optional "what are we deciding" field (e.g. "who pays", "presentation order") and the copied result will include it, ready to paste into a group chat. Useful for parties, teams, classrooms, and online meetings alike.',
+      faqTitle: 'FAQ',
+      faq1Q: 'Is the pick really fair?',
+      faq1A: "Yes. It uses your browser's standard random number function, so every participant has an equal chance of being picked. There's no bias toward any particular name.",
+      faq2Q: "Is there a limit on how many people I can add?",
+      faq2A: 'No hard limit — use "+ Add participant" as many times as you need, starting from 2 people. It works just as well for a small dinner as for a large team.',
       allToolsLink: 'All tools',
       privacyLink: 'Privacy policy'
     }
@@ -260,6 +278,11 @@
     document.getElementById('aboutTitle').textContent = t().aboutTitle;
     document.getElementById('aboutBody1').textContent = t().aboutBody1;
     document.getElementById('aboutBody2').textContent = t().aboutBody2;
+    document.getElementById('faqTitle').textContent = t().faqTitle;
+    document.getElementById('faq1Q').textContent = t().faq1Q;
+    document.getElementById('faq1A').textContent = t().faq1A;
+    document.getElementById('faq2Q').textContent = t().faq2Q;
+    document.getElementById('faq2A').textContent = t().faq2A;
     document.getElementById('allToolsLink').textContent = t().allToolsLink;
     document.getElementById('allToolsLink').href = 'https://naginata-work.github.io/';
     document.getElementById('privacyLink').textContent = t().privacyLink;
