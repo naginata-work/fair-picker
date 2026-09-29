@@ -119,6 +119,9 @@
 </div>
 
 <script>
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
   const I18N = {
     ja: {
       title: '🎯 公平くじ引きツール',
@@ -190,7 +193,7 @@
     personCount++;
     const div = document.createElement('div');
     div.className = 'person-row';
-    div.innerHTML = `<input type="text" placeholder="${t().namePlaceholder}" value="${name}">
+    div.innerHTML = `<input type="text" placeholder="${t().namePlaceholder}" value="${escapeHtml(name)}">
       <button class="remove" title="x">×</button>`;
     div.querySelector('.remove').addEventListener('click', () => {
       div.remove();
